@@ -58,7 +58,18 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 // - Return the pointer.
 
 RouteModel::Node *RoutePlanner::NextNode() {
+	RouteModel::Node *next_node;
+        std::sort(open_list.begin(),open_list.end(),comparator);
 
+	next_node = open_list.back();
+	open_list.pop_back();
+	
+	return next_node;
+
+}
+
+bool RoutePlanner::comparator(RouteModel::Node *node1, RouteModel::Node *node2){
+	return(node1->h_value + node1->g_value > node2->h_value + node2->g_value);
 }
 
 
@@ -74,8 +85,16 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     // Create path_found vector
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
+    RouteModel::Node *ptr= current_node;
 
     // TODO: Implement your solution here.
+    while (ptr != start_node){
+	    path_found.push_back(*ptr);
+	    distance+=ptr->distance(*(ptr->parent));
+	    ptr=ptr->parent;
+    }
+    path_found.push_back(*ptr);
+    std::reverse(path_found.begin(),path_found.end());
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
     return path_found;
