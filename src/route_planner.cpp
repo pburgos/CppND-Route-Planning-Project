@@ -59,17 +59,30 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 
 RouteModel::Node *RoutePlanner::NextNode() {
 	RouteModel::Node *next_node;
+        int i;
+	//if (!open_list.empty()){
+	//	std::cout << "before" << std::endl;
+	//	for (auto n:open_list){
+	//		std::cout << n->g_value + n->h_value << " ";
+	//	}
         std::sort(open_list.begin(),open_list.end(),comparator);
-
+	//	std::cout << "after" << std::endl ;
+	//	for (auto n:open_list){
+	//		std::cout << n->g_value + n->h_value <<  " " ;
+	//	}
+	//	std::cout << std::endl;
+	//	//std::cin >> i;
+  
 	next_node = open_list.back();
 	open_list.pop_back();
+	//}
 	
 	return next_node;
 
 }
 
 bool RoutePlanner::comparator(RouteModel::Node *node1, RouteModel::Node *node2){
-	return(node1->h_value + node1->g_value > node2->h_value + node2->g_value);
+	return((node1->h_value + node1->g_value) > (node2->h_value + node2->g_value));
 }
 
 
@@ -113,5 +126,25 @@ void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
 
     // TODO: Implement your solution here.
+    current_node = start_node;
+    current_node->g_value=0;
+    current_node->h_value=CalculateHValue(end_node);
+    //current_node->h_value=0;
+    open_list.push_back(current_node);
+    current_node->visited=true;
+    while(current_node!=end_node){
+        current_node=NextNode();
+        AddNeighbors(current_node);
+	if (current_node == end_node) {
+		std::cout << " great!!" << std::endl;
+	}
+    }
+    
+    m_Model.path = ConstructFinalPath(current_node);
+    if (m_Model.path.front().g_value == 0){
+	    std::cout << " yuuu" << std::endl;
+    }else{
+	    std::cout << m_Model.path.front().g_value << std::endl;
+    }
 
 }
