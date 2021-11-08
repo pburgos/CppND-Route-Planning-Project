@@ -132,19 +132,14 @@ void RoutePlanner::AStarSearch() {
     //current_node->h_value=0;
     open_list.push_back(current_node);
     current_node->visited=true;
-    while(current_node!=end_node){
+    int i=0;
+    while(!open_list.empty()){
         current_node=NextNode();
-        AddNeighbors(current_node);
 	if (current_node == end_node) {
-		std::cout << " great!!" << std::endl;
+            m_Model.path = ConstructFinalPath(current_node);
+	    break;
+	} else {
+            AddNeighbors(current_node);
 	}
     }
-    
-    m_Model.path = ConstructFinalPath(current_node);
-    if (m_Model.path.front().g_value == 0){
-	    std::cout << " yuuu" << std::endl;
-    }else{
-	    std::cout << m_Model.path.front().g_value << std::endl;
-    }
-
 }
